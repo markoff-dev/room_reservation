@@ -93,4 +93,3 @@ async def get_all_reservations(
         session=session, user=user
     )
     return reservations
-

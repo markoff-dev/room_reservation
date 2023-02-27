@@ -1,11 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from fastapi import Depends
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.user import current_user
 from app.crud.base import CRUDBase
 from app.models import User
 from app.models.reservation import Reservation
