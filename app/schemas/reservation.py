@@ -1,14 +1,27 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from pydantic import root_validator, validator
-
-
-def ReservationBase(BaseModel):
-    from_reserve: datetime
-    to_reserve: datetime
+from pydantic import BaseModel, root_validator, validator, Extra, Field
 
 
-def ReservationUpdate(ReservationBase):
+FROM_TIME = (
+    datetime.now() + timedelta(minutes=10)
+).isoformat(timespec='minutes')
+
+TO_TIME = (
+    datetime.now() + timedelta(hours=1)
+).isoformat(timespec='minutes')
+
+
+class ReservationBase(BaseModel):
+    from_reserve: datetime = Field(example=FROM_TIME)
+    to_reserve: datetime = Field(example=TO_TIME)
+
+    class Config:
+        # запрещаем передавать пользователю сторонние поля
+        extra = Extra.forbid
+
+
+class ReservationUpdate(ReservationBase):
     @validator('from_reserve')
     def check_from_reserve_later_than_now(cls, value):
         if value <= datetime.now():
@@ -28,7 +41,7 @@ def ReservationUpdate(ReservationBase):
         return values
 
 
-def ReservationCreate(ReservationUpdate):
+class ReservationCreate(ReservationUpdate):
     meetingroom_id: int
 
 
