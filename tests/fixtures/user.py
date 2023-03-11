@@ -53,3 +53,13 @@ def superuser_client():
     app.dependency_overrides[current_superuser] = lambda: superuser
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture
+def get_all_users(superuser_client, test_client, user_client):
+    return {
+        'superuser': superuser_client,
+        'user': test_client,
+        'not_auth_user': user_client
+    }
+

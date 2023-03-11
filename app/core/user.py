@@ -65,8 +65,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             self, user: User, request: Optional[Request] = None
     ):
         # Вместо print здесь можно было бы настроить отправку письма.
-        print(f'Пользователь {user.email} зарегистрирован.')
-
+        # print(f'Пользователь {user.email} зарегистрирован.')
+        pass
 
 # Корутина, возвращающая объект класса UserManager.
 async def get_user_manager(user_db=Depends(get_user_db)):
