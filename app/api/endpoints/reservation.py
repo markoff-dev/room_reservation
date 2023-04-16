@@ -14,51 +14,53 @@ from app.schemas.reservation import (ReservationCreate, ReservationDB,
 router = APIRouter()
 
 
-@router.post('/', response_model=ReservationDB)
+@router.post("/", response_model=ReservationDB)
 async def create_reservation(
-        reservation: ReservationCreate,
-        session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_user)
+    reservation: ReservationCreate,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user),
 ):
-    await check_meeting_room_exists(
-        reservation.meetingroom_id, session
-    )
+    """Зарезервировать комнату.
+
+    - Доступен всем авторизированным пользователям.
+    """
+    await check_meeting_room_exists(reservation.meetingroom_id, session)
     await check_reservation_intersections(
         **reservation.dict(), session=session
     )
-    new_reservation = await reservation_crud.create(
-        reservation, session, user
-    )
+    new_reservation = await reservation_crud.create(reservation, session, user)
     return new_reservation
 
 
-@router.get('/', response_model=list[ReservationDB])
+@router.get("/", response_model=list[ReservationDB])
 async def get_all_reservations(
-        session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
+    """Получить список всех резерваций"""
     all_reservations = await reservation_crud.get_multi(session)
     return all_reservations
 
 
-@router.delete('/{reservation_id}', response_model=ReservationDB)
-async def get_all_reservations(
-        reservation_id: int,
-        session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_user),
+@router.delete("/{reservation_id}", response_model=ReservationDB)
+async def delete_reservations(
+    reservation_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user),
 ):
     """Для суперюзеров или создателей объекта бронирования."""
-    reservation = await check_reservation_before_edit(reservation_id,
-                                                      session, user)
+    reservation = await check_reservation_before_edit(
+        reservation_id, session, user
+    )
     reservation = await reservation_crud.remove(reservation, session)
     return reservation
 
 
-@router.patch('/{reservation_id}', response_model=ReservationDB)
+@router.patch("/{reservation_id}", response_model=ReservationDB)
 async def update_reservation(
-        reservation_id: int,
-        obj_in: ReservationUpdate,
-        session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_user),
+    reservation_id: int,
+    obj_in: ReservationUpdate,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user),
 ):
     """Для суперюзеров или создателей объекта бронирования."""
     reservation = await check_reservation_before_edit(
@@ -80,13 +82,13 @@ async def update_reservation(
 
 
 @router.get(
-    '/my_reservations',
+    "/my_reservations",
     response_model=list[ReservationDB],
-    response_model_exclude={'user_id'},
+    response_model_exclude={"user_id"},
 )
 async def get_all_reservations(
-        session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_user)
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_user),
 ):
     """Получает список всех бронирований для текущего пользователя."""
     reservations = await reservation_crud.get_by_user(

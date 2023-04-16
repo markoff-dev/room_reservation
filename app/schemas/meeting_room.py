@@ -13,10 +13,10 @@ class MeetingRoomCreate(MeetingRoomBase):
 
 
 class MeetingRoomUpdate(MeetingRoomBase):
-    @validator('name')
+    @validator("name")
     def name_cannot_be_null(cls, value):
         if value is None:
-            raise ValueError('Имя переговорки не может быть пустым!')
+            raise ValueError("Имя переговорки не может быть пустым!")
         return value
 
 

@@ -21,7 +21,7 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
 # Определяем транспорт: передавать токен будем
 # через заголовок HTTP-запроса Authorization: Bearer.
 # Указываем URL эндпоинта для получения токена.
-bearer_transport = BearerTransport(tokenUrl='auth/jwt/login')
+bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
 
 # Определяем стратегию: хранение токена в виде JWT.
@@ -34,14 +34,13 @@ def get_jwt_strategy() -> JWTStrategy:
 
 # Создаём объект бэкенда аутентификации с выбранными параметрами.
 auth_backend = AuthenticationBackend(
-    name='jwt',  # Произвольное имя бэкенда (должно быть уникальным).
+    name="jwt",  # Произвольное имя бэкенда (должно быть уникальным).
     transport=bearer_transport,
     get_strategy=get_jwt_strategy,
 )
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-
     # Здесь можно описать свои условия валидации пароля.
     # При успешной валидации функция ничего не возвращает.
     # При ошибке валидации будет вызван специальный класс ошибки
@@ -53,20 +52,21 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     ) -> None:
         if len(password) < 3:
             raise InvalidPasswordException(
-                reason='Password should be at least 3 characters'
+                reason="Password should be at least 3 characters"
             )
         if user.email in password:
             raise InvalidPasswordException(
-                reason='Password should not contain e-mail'
+                reason="Password should not contain e-mail"
             )
 
     # Пример метода для действий после успешной регистрации пользователя.
     async def on_after_register(
-            self, user: User, request: Optional[Request] = None
+        self, user: User, request: Optional[Request] = None
     ):
         # Вместо print здесь можно было бы настроить отправку письма.
         # print(f'Пользователь {user.email} зарегистрирован.')
         pass
+
 
 # Корутина, возвращающая объект класса UserManager.
 async def get_user_manager(user_db=Depends(get_user_db)):

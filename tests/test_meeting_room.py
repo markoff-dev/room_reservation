@@ -176,7 +176,7 @@ async def test_delete_meeting_room(
         superuser_client,
         create_another_meeting_room
 ):
-    """Тест проверяет, возможность удаления суперпользователем
+    """Возможность удаления суперпользователем
     существующей переговорки"""
     current_meeting_room_id = create_another_meeting_room.id
     response = superuser_client.delete(
@@ -193,7 +193,7 @@ async def test_delete_meeting_room(
 
 
 def test_delete_meeting_room_not_found(superuser_client):
-    """Тест проверяет, что при DELETE запросе от суперпользователя по
+    """При DELETE запросе от суперпользователя по
     несуществующему ID получаем правильный код ошибки и тело ответа"""
     meeting_room_id = 1
 
@@ -244,24 +244,29 @@ async def test_get_all_meeting_room_reserved(
     assert sorted(list(data.keys())) == keys, (
         f'При получении списка переговорок в ответе должны быть ключи `{keys}`'
     )
-    print()
-    print([response.json()[0].get('from_reserve')])
-    print([create_actual_reserved_meeting_room.from_reserve])
-    print([create_actual_reserved_meeting_room.from_reserve.strftime()])
-    print()
+
     assert response.json() == [
         {
-            'from_reserve': create_actual_reserved_meeting_room.from_reserve.strftime(),
-            'to_reserve': create_actual_reserved_meeting_room.to_reserve.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+            'from_reserve':
+                create_actual_reserved_meeting_room.from_reserve.strftime(
+                    '%Y-%m-%dT%H:%M:%S.%f'),
+            'to_reserve':
+                create_actual_reserved_meeting_room.to_reserve.strftime(
+                    '%Y-%m-%dT%H:%M:%S.%f'),
             'id': create_actual_reserved_meeting_room.id,
             'meetingroom_id':
                 create_actual_reserved_meeting_room.meetingroom_id
         },
         {
-            'from_reserve': create_another_actual_reserved_meeting_room.from_reserve.strftime('%Y-%m-%dT%H:%M:%S.%f'),
-            'to_reserve': create_another_actual_reserved_meeting_room.to_reserve.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+            'from_reserve':
+                create_another_actual_reserved_meeting_room.
+                from_reserve.strftime('%Y-%m-%dT%H:%M:%S.%f'),
+            'to_reserve':
+                create_another_actual_reserved_meeting_room.to_reserve.
+                strftime('%Y-%m-%dT%H:%M:%S.%f'),
             'id': create_another_actual_reserved_meeting_room.id,
-            'meetingroom_id': create_actual_reserved_meeting_room.meetingroom_id
+            'meetingroom_id':
+                create_actual_reserved_meeting_room.meetingroom_id
         }
     ], (f'При получении списка переговорок тело ответа API отличается от '
         f'ожидаемого.')
