@@ -18,37 +18,40 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
 
 
-# Определяем транспорт: передавать токен будем
-# через заголовок HTTP-запроса Authorization: Bearer.
-# Указываем URL эндпоинта для получения токена.
+# Define the transport: we will transfer the token
+# via HTTP request header Authorization: Bearer.
+# Specify the URL of the endpoint to get the token.
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
 
-# Определяем стратегию: хранение токена в виде JWT.
+# Define the strategy: store the token as a JWT.
 def get_jwt_strategy() -> JWTStrategy:
-    # В специальный класс из настроек приложения
-    # передаётся секретное слово, используемое для генерации токена.
-    # Вторым аргументом передаём срок действия токена в секундах.
+    # To a special class from the application settings
+    # pass the secret word used to generate the token.
+    # The second argument is the token expiration date in seconds.
     return JWTStrategy(secret=settings.secret, lifetime_seconds=3600)
 
 
-# Создаём объект бэкенда аутентификации с выбранными параметрами.
+# Create an authentication backend object with the selected parameters.
 auth_backend = AuthenticationBackend(
-    name="jwt",  # Произвольное имя бэкенда (должно быть уникальным).
+    name="jwt",  # Arbitrary backend name (must be unique).
     transport=bearer_transport,
     get_strategy=get_jwt_strategy,
 )
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-    # Здесь можно описать свои условия валидации пароля.
-    # При успешной валидации функция ничего не возвращает.
-    # При ошибке валидации будет вызван специальный класс ошибки
-    # InvalidPasswordException.
+    """Here you can describe your password validation conditions.
+
+    On successful validation, the function returns nothing.
+    On validation error, a special error class will be called
+    InvalidPasswordException.
+    """
+
     async def validate_password(
-        self,
-        password: str,
-        user: Union[UserCreate, User],
+            self,
+            password: str,
+            user: Union[UserCreate, User],
     ) -> None:
         if len(password) < 3:
             raise InvalidPasswordException(
@@ -59,16 +62,14 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
                 reason="Password should not contain e-mail"
             )
 
-    # Пример метода для действий после успешной регистрации пользователя.
+    # An example of a method for actions after successful user registration.
     async def on_after_register(
-        self, user: User, request: Optional[Request] = None
+            self, user: User, request: Optional[Request] = None
     ):
-        # Вместо print здесь можно было бы настроить отправку письма.
-        # print(f'Пользователь {user.email} зарегистрирован.')
+        # Here it would be possible to configure the sending of the letter.
         pass
 
 
-# Корутина, возвращающая объект класса UserManager.
 async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 

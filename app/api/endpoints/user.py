@@ -24,7 +24,13 @@ router.include_router(
 
 @router.delete("/users/{id}", tags=["users"], deprecated=True)
 def delete_user(id: str):
-    """Не используйте удаление, деактивируйте пользователей."""
+    """Удалить пользователя (deprecated).
+
+    Не используйте удаление, деактивируйте пользователей.
+
+    - Для деактивации в профиле пользователя установить is_active в значение
+    false.
+    """
     raise HTTPException(
         status_code=405, detail="Удаление пользователей запрещено!"
     )

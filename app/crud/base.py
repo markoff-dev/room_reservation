@@ -8,8 +8,10 @@ from app.models import User
 
 
 class CRUDBase:
+    """Implements CRUD to work with the database using sqlalchemy."""
+
     def __init__(self, model):
-        self.model = model
+        self.model = model  # sqlalchemy model
 
     async def get(
         self,

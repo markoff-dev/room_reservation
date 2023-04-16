@@ -103,9 +103,9 @@ async def get_reservations_for_room(
     meeting_room_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Получить список резерваций по комнате.
+    """Получить список броней по комнате.
 
-    - Ответ содержит только актуальные резервации.
+    - Ответ содержит только актуальные бронирования.
     - Доступен только пользователям с ролью администратора.
     """
     await check_meeting_room_exists(meeting_room_id, session)

@@ -20,7 +20,7 @@ async def create_reservation(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user),
 ):
-    """Зарезервировать комнату.
+    """Забронировать комнату.
 
     - Доступен всем авторизированным пользователям.
     """
@@ -35,12 +35,12 @@ async def create_reservation(
 @router.get(
     "/",
     response_model=list[ReservationDB],
-    dependencies=[Depends(current_user)]
+    dependencies=[Depends(current_user)],
 )
 async def get_all_reservations(
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Получить список всех актуальных резерваций.
+    """Получить список всех актуальных бронирований.
 
     - Доступен всем авторизированным пользователям.
     """
@@ -54,7 +54,10 @@ async def delete_reservations(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user),
 ):
-    """Для суперюзеров или создателей объекта бронирования."""
+    """Удалить бронирование.
+
+    - Доступен всем создателям бронирования и администраторам.
+    """
     reservation = await check_reservation_before_edit(
         reservation_id, session, user
     )
@@ -69,7 +72,10 @@ async def update_reservation(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user),
 ):
-    """Для суперюзеров или создателей объекта бронирования."""
+    """Изменить бронирование.
+
+    - Доступен всем создателям бронирования и администраторам.
+    """
     reservation = await check_reservation_before_edit(
         reservation_id, session, user
     )
@@ -93,11 +99,14 @@ async def update_reservation(
     response_model=list[ReservationDB],
     response_model_exclude={"user_id"},
 )
-async def get_all_reservations(
+async def get_me_reservations(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user),
 ):
-    """Получает список всех бронирований для текущего пользователя."""
+    """Получает список всех своих (привязанных к пользователю) бронирований.
+
+    - Доступен всем создателям бронирования.
+    """
     reservations = await reservation_crud.get_by_user(
         session=session, user=user
     )
