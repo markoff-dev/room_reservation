@@ -32,13 +32,20 @@ async def create_reservation(
     return new_reservation
 
 
-@router.get("/", response_model=list[ReservationDB])
+@router.get(
+    "/",
+    response_model=list[ReservationDB],
+    dependencies=[Depends(current_user)]
+)
 async def get_all_reservations(
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Получить список всех резерваций"""
-    all_reservations = await reservation_crud.get_multi(session)
-    return all_reservations
+    """Получить список всех актуальных резерваций.
+
+    - Доступен всем авторизированным пользователям.
+    """
+    reservations = await reservation_crud.get_future_reservations(session)
+    return reservations
 
 
 @router.delete("/{reservation_id}", response_model=ReservationDB)
