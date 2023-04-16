@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -34,7 +35,7 @@ async def create_new_meeting_room(
 
 @router.get(
     "/",
-    response_model=list[MeetingRoomDB],
+    response_model=List[MeetingRoomDB],
     response_model_exclude_none=True,
 )
 async def get_all_meeting_rooms(
@@ -95,7 +96,7 @@ async def remove_meeting_room(
 
 @router.get(
     "/{meeting_room_id}/reservations",
-    response_model=list[ReservationDB],
+    response_model=List[ReservationDB],
     dependencies=[Depends(current_superuser)],
     response_model_exclude={"user_id"},
 )

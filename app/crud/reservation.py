@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,7 +18,7 @@ class CRUDReservation(CRUDBase):
         meetingroom_id: int,
         reservation_id: Optional[int] = None,
         session: AsyncSession
-    ) -> list[Reservation]:
+    ) -> List[Reservation]:
         select_stmt = select(Reservation).where(
             Reservation.meetingroom_id == meetingroom_id,
             and_(
@@ -36,7 +36,7 @@ class CRUDReservation(CRUDBase):
         self,
         room_id: int,
         session: AsyncSession,
-    ) -> list[Reservation]:
+    ) -> List[Reservation]:
         reservations = await session.execute(
             select(Reservation).where(
                 Reservation.meetingroom_id == room_id,
@@ -49,7 +49,7 @@ class CRUDReservation(CRUDBase):
     async def get_future_reservations(
         self,
         session: AsyncSession,
-    ) -> list[Reservation]:
+    ) -> List[Reservation]:
         reservations = await session.execute(
             select(Reservation).where(
                 Reservation.to_reserve > datetime.now(),
@@ -60,7 +60,7 @@ class CRUDReservation(CRUDBase):
 
     async def get_by_user(
         self, session: AsyncSession, user: User
-    ) -> list[Reservation]:
+    ) -> List[Reservation]:
         reservations = await session.execute(
             select(Reservation).where(Reservation.user_id == user.id)
         )

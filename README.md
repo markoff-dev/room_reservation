@@ -41,14 +41,20 @@ python3 -m venv venv
 pip install -r requirements.txt
 ```
 
-Для запуска на SQLite переименовать .env.example в .env и настроить под себя:
+Для запуска с SQLite и настройками по умолчанию, переименовать .env.example 
+в .env:
 
 ```
-APP_TITLE=Сервис бронирования переговорных комнат
-DATABASE_URL=your_database
-SECRET=your_secret
-FIRST_SUPERUSER_EMAIL=admin@example.com
-FIRST_SUPERUSER_PASSWORD=admin
+mv .env.example .env
+```
+
+Или настроить .env под себя:
+```
+APP_TITLE=Имя сервиса
+DATABASE_URL=DSN нужной DB
+SECRET=Ключ шифрования (любая строка)
+FIRST_SUPERUSER_EMAIL=Почта суперпользователя
+FIRST_SUPERUSER_PASSWORD=Пароль суперпользователя
 ```
 
 Примененить миграций:
