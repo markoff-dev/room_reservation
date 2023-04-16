@@ -57,7 +57,7 @@ FIRST_SUPERUSER_EMAIL=Почта суперпользователя
 FIRST_SUPERUSER_PASSWORD=Пароль суперпользователя
 ```
 
-Примененить миграций:
+Применить миграции:
 
 ```
 alembic upgrade head
