@@ -41,12 +41,14 @@ python3 -m venv venv
 pip install -r requirements.txt
 ```
 
-Для запуска на SQLite переименовать .env.example в .env либо настроить по себя:
+Для запуска на SQLite переименовать .env.example в .env и настроить под себя:
 
 ```
 APP_TITLE=Сервис бронирования переговорных комнат
 DATABASE_URL=your_database
 SECRET=your_secret
+FIRST_SUPERUSER_EMAIL=admin@example.com
+FIRST_SUPERUSER_PASSWORD=admin
 ```
 
 Примененить миграций:
@@ -60,6 +62,10 @@ alembic upgrade head
 ```
 uvicorn app.main:app --reload
 ```
+
+После первого запуска произойдёт автоматическое создание
+суперпользователя заданного в .env. 
+При авторизации в качестве username используется email.
 
 Документация API:
 
